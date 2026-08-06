@@ -106,23 +106,24 @@ export const api = async (path: string, init?: RequestInit): Promise<Response> =
     })
   }
 
-  if (cleanPath === 'coach/today') {
+  if (cleanPath.startsWith('coach/today/')) {
+    const constitution = cleanPath.slice('coach/today/'.length)
     const day = todayKey()
     if (userId) {
       if (method === 'GET') {
-        const { data } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).maybeSingle()
+        const { data } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).eq('constitution', constitution).maybeSingle()
         return jsonResponse({ checks: data?.checks ?? {} })
       }
       if (method === 'PUT') {
         const body = parseBody(init)
-        const { data: existing } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).maybeSingle()
+        const { data: existing } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).eq('constitution', constitution).maybeSingle()
         const checks = { ...(existing?.checks ?? {}) }
         if (body.task_key) checks[body.task_key] = !!body.completed
-        await supabase.from('coach_checks').upsert({ user_id: userId, day, checks })
+        await supabase.from('coach_checks').upsert({ user_id: userId, day, constitution, checks })
         return jsonResponse({ ok: true })
       }
     } else {
-      const key = `coach:${day}`
+      const key = `coach:${day}:${constitution}`
       if (method === 'GET') {
         return jsonResponse({ checks: readJSON(key, {}) })
       }
