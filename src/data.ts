@@ -123,6 +123,34 @@ export const reports: Record<ConstitutionKey, ConstitutionReport> = {
     keywords: ['수면 리듬', '안정', '규칙성'],
   },
 }
+export const coachHabitTips: Record<ConstitutionKey, string[]> = {
+  한태양: ['중요한 결정 전, 3초만 멈춰서 생각해보기', '야식과 기름진 안주는 오늘 하루 건너뛰기', '다리를 살짝 올리고 10분 휴식하기'],
+  열태양: ['화면 20분 볼 때마다 먼 곳 한 번 바라보기', '저녁엔 매운 음식 대신 시원한 채소로', '잠들기 30분 전 화면 끄고 눈 감기'],
+  한태음: ['엘리베이터 대신 계단 한 층 걸어보기', '식사 후 10분은 앉아있지 않고 움직이기', '물 한 잔 더 마시기'],
+  열태음: ['오늘 식사는 평소보다 한 숟갈 적게', '탄산음료 대신 물이나 차로', '식후 바로 눕지 않고 잠깐 걷기'],
+  한소양: ['끼니 거르지 않고 제시간에 챙기기', '화가 날 땐 잠깐 자리를 벗어나 숨 고르기', '매운 음식 대신 담백한 메뉴로'],
+  열소양: ['밥은 최소 15분 이상 천천히 먹기', '물을 평소보다 자주 마시기', '잠들기 전 오늘 감정을 짧게 적어보기'],
+  한소음: ['찬 음료 대신 따뜻한 차로 시작하기', '양말 신고 손발 따뜻하게 유지하기', '걱정거리는 딱 5분만 생각하고 내려놓기'],
+  열소음: ['잠자리에 드는 시간을 어제와 같게 맞추기', '카페인은 오후 2시 이전까지만', '자기 전 따뜻한 물로 반신욕 5분'],
+}
+export type CoachPlan = { key: string; icon: string; type: string; title: string; text: string }
+function dayOfYear(date: Date): number {
+  const start = new Date(date.getFullYear(), 0, 0)
+  return Math.floor((date.getTime() - start.getTime()) / 86400000)
+}
+export function getDailyCoachPlans(constitution: ConstitutionKey, date: Date = new Date()): CoachPlan[] {
+  const report = reports[constitution]
+  const idx = dayOfYear(date)
+  const food = report.recommendedFoods[idx % report.recommendedFoods.length]
+  const activity = report.recommendedActivities[idx % report.recommendedActivities.length]
+  const habits = coachHabitTips[constitution]
+  const habit = habits[idx % habits.length]
+  return [
+    { key: 'meal', icon: '◒', type: '식단', title: `${food} 챙기기`, text: `${constitutionLabels[constitution]} 체질에 맞는 음식으로 오늘 식사를 가볍게 챙겨보세요.` },
+    { key: 'move', icon: '⌁', type: '운동', title: activity, text: '내 체질에 맞는 활동으로 몸을 가볍게 움직여보세요.' },
+    { key: 'habit', icon: '☾', type: '습관', title: habit, text: '작은 실천이 쌓이면 몸의 균형에 도움이 돼요.' },
+  ]
+}
 export const categories = [
   { icon: '◌', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
   { icon: '⌁', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
