@@ -103,7 +103,7 @@ export default function App() {
   const content = loading ? <section className="loading-view"><div className="loading-leaf">☘</div><p>나만의 웰니스 공간을 준비하고 있어요</p></section> : {
     diagnosis: <Diagnosis answers={answers} onAnswer={addAnswer} onRestart={restart} />,
     result: <Result constitution={constitution} onDiagnose={startDiagnosis} onShare={share} />,
-    report: <Report constitution={constitution} onDiagnose={startDiagnosis} />,
+    report: <Report constitution={constitution} onDiagnose={startDiagnosis} member={member} onRequestLogin={() => setShowAuth(true)} />,
     recommendations: <Recommendations constitution={constitution} onDiagnose={startDiagnosis} />,
     coach: <Coach constitution={constitution} onDiagnose={startDiagnosis} />,
   }[tab]
