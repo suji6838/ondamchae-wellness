@@ -53,10 +53,15 @@ export const api = async (path: string, init?: RequestInit): Promise<Response> =
     }
   }
 
-  if (cleanPath === 'members' && method === 'POST') {
-    const body = parseBody(init)
-    writeJSON('member', body)
-    return jsonResponse({ ok: true })
+  if (cleanPath === 'members') {
+    if (method === 'GET') {
+      return jsonResponse(readJSON('member', null))
+    }
+    if (method === 'POST') {
+      const body = parseBody(init)
+      writeJSON('member', body)
+      return jsonResponse({ ok: true })
+    }
   }
 
   if (cleanPath === 'coach/today') {
