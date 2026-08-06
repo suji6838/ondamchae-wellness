@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { GOOGLE_CLIENT_ID } from '../config'
 import { supabase } from '../lib/supabase'
 
+type Member = { name: string; email: string; picture?: string }
 type Props = {
   onClose: () => void
-  onComplete: (member: { name: string; email: string; picture?: string }) => Promise<void>
+  onComplete: (member: Member) => Promise<void>
+  member: Member | null
+  onLogout: () => Promise<void>
 }
 
 declare global {
@@ -20,12 +23,13 @@ declare global {
   }
 }
 
-export default function Auth({ onClose, onComplete }: Props) {
+export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
   const buttonRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
+    if (member) return
     let cancelled = false
     const handleCredential = async (response: { credential: string }) => {
       setSubmitting(true)
@@ -65,6 +69,28 @@ export default function Auth({ onClose, onComplete }: Props) {
     }
     return () => { cancelled = true }
   }, [])
+
+  if (member) {
+    const logout = async () => {
+      setSubmitting(true)
+      try {
+        await onLogout()
+        onClose()
+      } finally {
+        setSubmitting(false)
+      }
+    }
+    return <div className="modal-backdrop" role="presentation">
+      <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button className="modal-close" onClick={onClose} aria-label="창 닫기">×</button>
+        <span className="eyebrow">온담채 회원</span>
+        {member.picture && <img src={member.picture} alt="" className="member-avatar-lg" referrerPolicy="no-referrer" />}
+        <h1 id="auth-title">{member.name}님,<br /><em>안녕하세요.</em></h1>
+        <p className="auth-copy">{member.email}으로 로그인되어 있어요. 진단 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
+        <button className="google-button" type="button" onClick={logout} disabled={submitting}>{submitting ? '로그아웃하는 중이에요' : '로그아웃'}</button>
+      </section>
+    </div>
+  }
 
   return <div className="modal-backdrop" role="presentation">
     <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">

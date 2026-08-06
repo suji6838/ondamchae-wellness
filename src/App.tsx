@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from './lib/api'
+import { supabase } from './lib/supabase'
 import { ConstitutionGroup, ConstitutionKey, constitutionLabels, questions } from './data'
 import Diagnosis from './components/Diagnosis'
 import Result from './components/Result'
@@ -77,6 +78,14 @@ export default function App() {
     } catch {}
     setNotice(`${nextMember.name}님, 온담채 회원으로 환영해요.`)
   }
+  const logout = async () => {
+    await supabase.auth.signOut()
+    setMember(null)
+    setAnswers([])
+    setConstitution(null)
+    setTab('diagnosis')
+    setNotice('로그아웃했어요. 진단 결과는 계정에 안전하게 보관되어 있어요.')
+  }
   const share = async () => {
     if (!constitution) return
     const text = `온담채 웰니스 자가 체크 결과, 저는 ${constitutionLabels[constitution]} 경향으로 나왔어요. 내 몸의 균형을 함께 살펴보세요.`
@@ -99,7 +108,7 @@ export default function App() {
     <header className="topbar"><button className="brand" onClick={goHome} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}{member.name}님</>) : '로그인'}</button></div></header>
     <main>{content}</main>
     {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="알림 닫기">×</button></div>}
-    {showAuth && <Auth onClose={() => setShowAuth(false)} onComplete={completeAuth} />}
+    {showAuth && <Auth onClose={() => setShowAuth(false)} onComplete={completeAuth} member={member} onLogout={logout} />}
     <nav className="tabbar" aria-label="주요 메뉴">{tabs.map(item => <button key={item.id} className={tab === item.id ? 'active' : ''} onClick={() => setTab(item.id)}><span>{item.icon}</span>{item.label}</button>)}</nav>
   </div>
 }
