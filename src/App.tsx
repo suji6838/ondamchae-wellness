@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from './lib/api'
 import { supabase } from './lib/supabase'
+import { shareToKakao } from './lib/kakaoShare'
 import { ConstitutionGroup, ConstitutionKey, constitutionLabels, questions } from './data'
 import Diagnosis from './components/Diagnosis'
 import Result from './components/Result'
@@ -86,15 +87,17 @@ export default function App() {
     setTab('diagnosis')
     setNotice('로그아웃했어요. 진단 결과는 계정에 안전하게 보관되어 있어요.')
   }
-  const share = async () => {
+  const share = () => {
     if (!constitution) return
-    const text = `온담채 웰니스 자가 체크 결과, 저는 ${constitutionLabels[constitution]} 경향으로 나왔어요. 내 몸의 균형을 함께 살펴보세요.`
     try {
-      if (navigator.share) await navigator.share({ title: '온담채 웰니스 결과', text })
-      else await navigator.clipboard.writeText(text)
-      setNotice('공유할 내용을 준비했어요. 카카오톡 대화방에 붙여넣어 전달해 보세요.')
+      shareToKakao({
+        title: '온담채 웰니스 결과',
+        description: `저는 ${constitutionLabels[constitution]} 경향으로 나왔어요. 내 몸의 균형을 함께 살펴보세요.`,
+        imageUrl: 'https://ondamchae-wellness.vercel.app/share-card.png',
+        link: 'https://ondamchae-wellness.vercel.app/',
+      })
     } catch {
-      setNotice('공유를 취소했어요.')
+      setNotice('카카오톡 공유를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
     }
   }
   const content = loading ? <section className="loading-view"><div className="loading-leaf">☘</div><p>나만의 웰니스 공간을 준비하고 있어요</p></section> : {
