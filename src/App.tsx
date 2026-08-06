@@ -68,9 +68,13 @@ export default function App() {
     setTab(constitution ? 'result' : 'diagnosis')
   }
   const completeAuth = async (nextMember: Member) => {
-    const response = await api('members', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(nextMember) })
-    if (!response.ok) throw new Error('member save failed')
     setMember(nextMember)
+    try {
+      const data = await api('profile').then(r => r.json())
+      setAnswers(data.answers || [])
+      setConstitution(data.constitution || null)
+      if ((data.answers || []).length === 20 && data.constitution) setTab('result')
+    } catch {}
     setNotice(`${nextMember.name}님, 온담채 회원으로 환영해요.`)
   }
   const share = async () => {

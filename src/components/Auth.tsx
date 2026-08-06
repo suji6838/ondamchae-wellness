@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { GOOGLE_CLIENT_ID } from '../config'
+import { supabase } from '../lib/supabase'
 
 type Props = {
   onClose: () => void
@@ -19,18 +20,6 @@ declare global {
   }
 }
 
-function decodeGoogleCredential(token: string): { name: string; email: string; picture?: string } {
-  const payload = token.split('.')[1]
-  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
-  const json = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
-      .join('')
-  )
-  return JSON.parse(json)
-}
-
 export default function Auth({ onClose, onComplete }: Props) {
   const buttonRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState('')
@@ -42,8 +31,17 @@ export default function Auth({ onClose, onComplete }: Props) {
       setSubmitting(true)
       setError('')
       try {
-        const profile = decodeGoogleCredential(response.credential)
-        await onComplete({ name: profile.name, email: profile.email, picture: profile.picture })
+        const { data, error: signInError } = await supabase.auth.signInWithIdToken({
+          provider: 'google',
+          token: response.credential,
+        })
+        if (signInError || !data.user) throw signInError ?? new Error('no user')
+        const meta = data.user.user_metadata ?? {}
+        await onComplete({
+          name: meta.full_name || meta.name || data.user.email || '회원',
+          email: data.user.email ?? '',
+          picture: meta.avatar_url || meta.picture,
+        })
         onClose()
       } catch {
         setError('로그인 정보를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.')
@@ -77,7 +75,7 @@ export default function Auth({ onClose, onComplete }: Props) {
       <div ref={buttonRef} className="google-signin-slot" />
       {submitting && <p className="loading-text">로그인 정보를 확인하고 있어요…</p>}
       {error && <p className="form-error" role="alert">{error}</p>}
-      <p className="auth-note">Google 계정 정보는 이 브라우저에만 저장되며, 별도 서버로 전송되지 않아요.</p>
+      <p className="auth-note">로그인하면 진단 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
     </section>
   </div>
 }

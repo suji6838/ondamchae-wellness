@@ -1,9 +1,12 @@
-// 원본(vibe.aitestbed.kr)에서는 이 함수가 플랫폼이 자동 제공하는 백엔드(api/profile,
-// api/members, api/coach/today)를 호출했지만, 독립 앱에는 그 백엔드가 없어서
-// 같은 인터페이스(path, init) => Promise<Response>를 유지한 채 localStorage로 대체했다.
-// 호출부(App.tsx, Coach.tsx)는 수정 없이 그대로 동작한다.
+// 로그인 전(게스트)에는 localStorage에 저장하고, Google 로그인 후에는 Supabase DB로
+// 저장 위치가 자동 전환된다. 최초 로그인 시 게스트로 진행했던 로컬 데이터가 있으면
+// 한 번만 DB로 옮긴다(migrateLocalToRemote). 호출부(App.tsx, Coach.tsx)는 그대로
+// api(path, init) => Promise<Response> 인터페이스를 사용한다.
+
+import { supabase } from './supabase'
 
 const STORAGE_PREFIX = 'ondamchae:'
+const MIGRATION_FLAG = STORAGE_PREFIX + 'migrated'
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10)
@@ -38,43 +41,98 @@ function parseBody(init?: RequestInit) {
   }
 }
 
+async function getUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.user.id ?? null
+}
+
+async function migrateLocalToRemote(userId: string) {
+  if (localStorage.getItem(MIGRATION_FLAG)) return
+  const localProfile = readJSON<{ answers: string[]; constitution: string | null }>('profile', { answers: [], constitution: null })
+  if (localProfile.answers?.length) {
+    await supabase.from('profiles').upsert({
+      id: userId,
+      answers: localProfile.answers,
+      constitution: localProfile.constitution,
+      updated_at: new Date().toISOString(),
+    })
+  }
+  localStorage.setItem(MIGRATION_FLAG, '1')
+}
+
 export const api = async (path: string, init?: RequestInit): Promise<Response> => {
   const cleanPath = path.replace(/^\/+/, '')
   const method = init?.method ?? 'GET'
+  const userId = await getUserId()
 
   if (cleanPath === 'profile') {
-    if (method === 'GET') {
-      return jsonResponse(readJSON('profile', { answers: [], constitution: null }))
-    }
-    if (method === 'PUT') {
-      const body = parseBody(init)
-      writeJSON('profile', { answers: body.answers ?? [], constitution: body.constitution || null })
-      return jsonResponse({ ok: true })
+    if (userId) {
+      await migrateLocalToRemote(userId)
+      if (method === 'GET') {
+        const { data } = await supabase.from('profiles').select('answers, constitution').eq('id', userId).maybeSingle()
+        return jsonResponse({ answers: data?.answers ?? [], constitution: data?.constitution ?? null })
+      }
+      if (method === 'PUT') {
+        const body = parseBody(init)
+        await supabase.from('profiles').upsert({
+          id: userId,
+          answers: body.answers ?? [],
+          constitution: body.constitution || null,
+          updated_at: new Date().toISOString(),
+        })
+        return jsonResponse({ ok: true })
+      }
+    } else {
+      if (method === 'GET') {
+        return jsonResponse(readJSON('profile', { answers: [], constitution: null }))
+      }
+      if (method === 'PUT') {
+        const body = parseBody(init)
+        writeJSON('profile', { answers: body.answers ?? [], constitution: body.constitution || null })
+        return jsonResponse({ ok: true })
+      }
     }
   }
 
-  if (cleanPath === 'members') {
-    if (method === 'GET') {
-      return jsonResponse(readJSON('member', null))
-    }
-    if (method === 'POST') {
-      const body = parseBody(init)
-      writeJSON('member', body)
-      return jsonResponse({ ok: true })
-    }
+  if (cleanPath === 'members' && method === 'GET') {
+    if (!userId) return jsonResponse(null)
+    const { data } = await supabase.auth.getUser()
+    const meta = data.user?.user_metadata ?? {}
+    if (!data.user) return jsonResponse(null)
+    return jsonResponse({
+      name: meta.full_name || meta.name || data.user.email,
+      email: data.user.email,
+      picture: meta.avatar_url || meta.picture,
+    })
   }
 
   if (cleanPath === 'coach/today') {
-    const key = `coach:${todayKey()}`
-    if (method === 'GET') {
-      return jsonResponse({ checks: readJSON(key, {}) })
-    }
-    if (method === 'PUT') {
-      const body = parseBody(init)
-      const checks = readJSON<Record<string, boolean>>(key, {})
-      if (body.task_key) checks[body.task_key] = !!body.completed
-      writeJSON(key, checks)
-      return jsonResponse({ ok: true })
+    const day = todayKey()
+    if (userId) {
+      if (method === 'GET') {
+        const { data } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).maybeSingle()
+        return jsonResponse({ checks: data?.checks ?? {} })
+      }
+      if (method === 'PUT') {
+        const body = parseBody(init)
+        const { data: existing } = await supabase.from('coach_checks').select('checks').eq('user_id', userId).eq('day', day).maybeSingle()
+        const checks = { ...(existing?.checks ?? {}) }
+        if (body.task_key) checks[body.task_key] = !!body.completed
+        await supabase.from('coach_checks').upsert({ user_id: userId, day, checks })
+        return jsonResponse({ ok: true })
+      }
+    } else {
+      const key = `coach:${day}`
+      if (method === 'GET') {
+        return jsonResponse({ checks: readJSON(key, {}) })
+      }
+      if (method === 'PUT') {
+        const body = parseBody(init)
+        const checks = readJSON<Record<string, boolean>>(key, {})
+        if (body.task_key) checks[body.task_key] = !!body.completed
+        writeJSON(key, checks)
+        return jsonResponse({ ok: true })
+      }
     }
   }
 
