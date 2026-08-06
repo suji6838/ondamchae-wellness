@@ -47,8 +47,10 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
           picture: meta.avatar_url || meta.picture,
         })
         onClose()
-      } catch {
-        setError('로그인 정보를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.')
+      } catch (err) {
+        console.error('Google/Supabase sign-in failed:', err)
+        const message = err instanceof Error ? err.message : String(err)
+        setError(`로그인에 실패했어요: ${message}`)
       } finally {
         setSubmitting(false)
       }
