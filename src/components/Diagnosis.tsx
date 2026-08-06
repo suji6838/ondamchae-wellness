@@ -3,7 +3,7 @@ type Props = { answers: string[]; onAnswer: (answer: string) => void; onRestart:
 export default function Diagnosis({ answers, onAnswer, onRestart }: Props) {
   const index = answers.length
   const current = questions[index]
-  if (!current) return null
+  if (!current) return <section className="empty-view"><div className="empty-orb">✓</div><h1>이미 진단을<br />완료했어요</h1><p>저장된 결과는 [결과] 탭에서 계속 확인할 수 있어요. 처음부터 다시 진단하고 싶다면 아래 버튼을 눌러주세요.</p><button className="primary-button" onClick={onRestart}>처음부터 다시 진단하기</button></section>
   return <section className="view diagnosis-view" aria-labelledby="diagnosis-title">
     <div className="section-intro"><span className="eyebrow">사상체질 셀프 체크</span><h1 id="diagnosis-title">나의 몸이 보내는<br /><em>작은 신호</em>를 들어볼까요?</h1><p>정답은 없어요. 지금의 나와 가장 가까운 답을 골라주세요.</p></div>
     <div className="progress-label"><span>{index + 1} / {questions.length}</span><button className="text-button" onClick={onRestart}>처음부터</button></div>

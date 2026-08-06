@@ -64,6 +64,9 @@ export default function App() {
     setTab('diagnosis')
     if (answers.length >= questions.length || constitution) void restart()
   }
+  const goHome = () => {
+    setTab(constitution ? 'result' : 'diagnosis')
+  }
   const completeAuth = async (nextMember: Member) => {
     const response = await api('members', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(nextMember) })
     if (!response.ok) throw new Error('member save failed')
@@ -89,7 +92,7 @@ export default function App() {
     coach: <Coach constitution={constitution} onDiagnose={startDiagnosis} />,
   }[tab]
   return <div className="app-shell">
-    <header className="topbar"><button className="brand" onClick={startDiagnosis} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}{member.name}님</>) : '로그인'}</button></div></header>
+    <header className="topbar"><button className="brand" onClick={goHome} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}{member.name}님</>) : '로그인'}</button></div></header>
     <main>{content}</main>
     {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="알림 닫기">×</button></div>}
     {showAuth && <Auth onClose={() => setShowAuth(false)} onComplete={completeAuth} />}
