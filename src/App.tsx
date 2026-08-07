@@ -50,14 +50,15 @@ export default function App() {
   const addAnswer = async (answer: string) => {
     const next = [...answers, answer]
     setAnswers(next)
-    if (next.length === 20) {
-      const result = determine(next)
+    const result = next.length === 20 ? determine(next) : null
+    if (result) {
       setConstitution(result)
       setTab('result')
-      try { await api('profile', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: next, constitution: result }) }) } catch {}
     }
+    try { await api('profile', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: next, constitution: result }) }) } catch {}
   }
   const restart = async () => {
+    if (answers.length > 0 && !window.confirm('지금까지 답한 내용이 사라져요. 처음부터 다시 시작할까요?')) return
     setAnswers([])
     setConstitution(null)
     try { await api('profile', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: [], constitution: '' }) }) } catch {}
@@ -112,7 +113,7 @@ export default function App() {
     coach: <Coach constitution={constitution} onDiagnose={startDiagnosis} />,
   }[tab]
   return <div className="app-shell">
-    <header className="topbar"><button className="brand" onClick={goHome} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}{member.name}님</>) : '로그인'}</button></div></header>
+    <header className="topbar"><button className="brand" onClick={goHome} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}<span className="member-name">{member.name}님</span></>) : '로그인'}</button></div></header>
     <main>{content}</main>
     {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="알림 닫기">×</button></div>}
     {showAuth && <Auth onClose={() => setShowAuth(false)} onComplete={completeAuth} member={member} onLogout={logout} />}

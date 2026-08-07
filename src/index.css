@@ -2,3 +2,5 @@
 .member-button{display:flex;align-items:center;gap:6px}.member-avatar{width:20px;height:20px;border-radius:50%;object-fit:cover}.google-signin-slot{display:flex;justify-content:center;margin:6px 0 4px}
 .member-avatar-lg{width:56px;height:56px;border-radius:50%;object-fit:cover;margin-top:4px}
 .recommendation-visual img{width:100%;height:100%;object-fit:cover}
+.answer-button:disabled{opacity:.55;cursor:default;pointer-events:none}
+.member-button{max-width:140px}.member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
