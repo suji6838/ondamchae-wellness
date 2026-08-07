@@ -17,6 +17,7 @@ declare global {
         id: {
           initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void
           renderButton: (parent: HTMLElement, options: Record<string, unknown>) => void
+          disableAutoSelect: () => void
         }
       }
     }
@@ -90,6 +91,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
     const logout = async () => {
       setSubmitting(true)
       try {
+        window.google?.accounts?.id?.disableAutoSelect()
         await onLogout()
         onClose()
       } finally {
