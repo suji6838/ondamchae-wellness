@@ -15,7 +15,7 @@ export default function Recommendations({ constitution, onDiagnose }: Props) {
         <article className="recommendation-card" key={item.key}>
           <div className={`recommendation-visual ${item.color}`}><img src={item.image} alt="" loading="lazy" /></div>
           <div className="rec-content">
-            {item.name && <p>{item.name}</p>}
+            <p style={item.name ? undefined : { visibility: 'hidden' }}>{item.name || ' '}</p>
             <h2>{item.title}</h2>
             <span>{item.text}</span>
             <button aria-label={`${item.title} 추천 자세히 보기`} onClick={() => setOpenKey(item.key)}>자세히 보기 <b>→</b></button>
