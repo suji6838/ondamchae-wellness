@@ -152,12 +152,12 @@ export function getDailyCoachPlans(constitution: ConstitutionKey, date: Date = n
   ]
 }
 export const categories = [
-  { icon: '◌', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
-  { icon: '⌁', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
-  { icon: '☾', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가', text: '호흡과 목·어깨 이완에 집중해 보세요.' },
-  { icon: '✦', name: '피부 관리', color: 'pink', title: '진정 보습 루틴', text: '세안 후 수분 장벽을 편안하게 지켜요.' },
-  { icon: 'C', name: '비타민', color: 'yellow', title: '기초 영양 케어', text: '식사와 함께 비타민 섭취를 검토해 보세요.' },
-  { icon: 'Ω', name: '오메가3', color: 'blue', title: '순환 밸런스', text: '개인 건강 상태에 맞춰 전문가와 상담하세요.' },
-  { icon: 'B', name: '프로바이오틱스', color: 'purple', title: '장 건강 루틴', text: '매일 같은 시간에 꾸준한 습관을 만들어 봐요.' },
-  { icon: '♡', name: '뷰티 제품', color: 'coral', title: '저자극 보습 케어', text: '향이 강하지 않은 보습 중심 제품을 추천해요.' },
+  { image: '/recommendations/aerobic.png', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
+  { image: '/recommendations/strength.png', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
+  { image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가', text: '호흡과 목·어깨 이완에 집중해 보세요.' },
+  { image: '/recommendations/skincare.png', name: '피부 관리', color: 'pink', title: '진정 보습 루틴', text: '세안 후 수분 장벽을 편안하게 지켜요.' },
+  { image: '/recommendations/vitamin.png', name: '비타민', color: 'yellow', title: '기초 영양 케어', text: '식사와 함께 비타민 섭취를 검토해 보세요.' },
+  { image: '/recommendations/omega3.png', name: '오메가3', color: 'blue', title: '순환 밸런스', text: '개인 건강 상태에 맞춰 전문가와 상담하세요.' },
+  { image: '/recommendations/probiotics.png', name: '프로바이오틱스', color: 'purple', title: '장 건강 루틴', text: '매일 같은 시간에 꾸준한 습관을 만들어 봐요.' },
+  { image: '/recommendations/beauty.png', name: '뷰티 제품', color: 'coral', title: '저자극 보습 케어', text: '향이 강하지 않은 보습 중심 제품을 추천해요.' },
 ]
