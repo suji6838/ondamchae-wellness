@@ -45,7 +45,8 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
   const [password, setPassword] = useState('')
 
   useEffect(() => {
-    if (member) return
+    // 로그인 여부와 상관없이 항상 초기화해 둔다 — disableAutoSelect()가 로그아웃
+    // 시점에도 정상 동작하려면 이 시점 이전에 initialize()가 호출되어 있어야 한다.
     let cancelled = false
     const handleCredential = async (response: { credential: string }) => {
       setSubmitting(true)
@@ -71,11 +72,13 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       }
     }
     const init = () => {
-      if (cancelled || !window.google || !buttonRef.current) return
+      if (cancelled || !window.google) return
       window.google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredential })
-      window.google.accounts.id.renderButton(buttonRef.current, {
-        type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width: 320,
-      })
+      if (buttonRef.current) {
+        window.google.accounts.id.renderButton(buttonRef.current, {
+          type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width: 320,
+        })
+      }
     }
     if (window.google?.accounts?.id) {
       init()
