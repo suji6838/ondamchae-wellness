@@ -101,8 +101,8 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         setSubmitting(false)
       }
     }
-    return <div className="modal-backdrop" role="presentation">
-      <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    return <div className="modal-backdrop" role="presentation" onClick={onClose}>
+      <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="창 닫기">×</button>
         <span className="eyebrow">온담채 회원</span>
         {member.picture && <img src={member.picture} alt="" className="member-avatar-lg" referrerPolicy="no-referrer" />}
@@ -157,8 +157,8 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
     }
   }
 
-  return <div className="modal-backdrop" role="presentation">
-    <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  return <div className="modal-backdrop" role="presentation" onClick={onClose}>
+    <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={(e) => e.stopPropagation()}>
       <button className="modal-close" onClick={onClose} aria-label="회원가입 창 닫기">×</button>
       <span className="eyebrow">온담채 회원 시작하기</span>
       <h1 id="auth-title">내 웰니스 기록을<br /><em>안전하게 이어가세요.</em></h1>
