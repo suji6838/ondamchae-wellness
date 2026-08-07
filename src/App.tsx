@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { api } from './lib/api'
+import { api, clearLocalGuestData } from './lib/api'
 import { supabase } from './lib/supabase'
 import { shareToKakao } from './lib/kakaoShare'
 import { ConstitutionGroup, ConstitutionKey, constitutionLabels, questions } from './data'
@@ -82,6 +82,7 @@ export default function App() {
   }
   const logout = async () => {
     await supabase.auth.signOut()
+    clearLocalGuestData()
     setMember(null)
     setAnswers([])
     setConstitution(null)

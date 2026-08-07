@@ -41,6 +41,12 @@ function parseBody(init?: RequestInit) {
   }
 }
 
+export function clearLocalGuestData() {
+  Object.keys(localStorage)
+    .filter((key) => key.startsWith(STORAGE_PREFIX))
+    .forEach((key) => localStorage.removeItem(key))
+}
+
 async function getUserId(): Promise<string | null> {
   const { data } = await supabase.auth.getSession()
   return data.session?.user.id ?? null
