@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { categories, categoryDetails, constitutionGroupOf, ConstitutionKey, constitutionLabels } from '../data'
+import { categories, categoryDetails, ConstitutionKey, constitutionLabels } from '../data'
 type Props = { constitution: ConstitutionKey | null; onDiagnose: () => void }
 export default function Recommendations({ constitution, onDiagnose }: Props) {
   const [openKey, setOpenKey] = useState<string | null>(null)
   if (!constitution) return <section className="empty-view compact"><div className="empty-orb">✦</div><h1>나를 위한 추천을<br />고르고 있어요</h1><p>체질을 확인한 뒤 개인화된 건강·뷰티 루틴을 만나보세요.</p><button className="primary-button" onClick={onDiagnose}>체질 확인하기</button></section>
-  const group = constitutionGroupOf[constitution]
   const openItem = categories.find((c) => c.key === openKey)
   return <section className="view recommendation-view">
     <span className="eyebrow">{constitutionLabels[constitution]} 맞춤 추천</span>
@@ -30,7 +29,7 @@ export default function Recommendations({ constitution, onDiagnose }: Props) {
           <button className="modal-close" onClick={() => setOpenKey(null)} aria-label="창 닫기">×</button>
           <span className="eyebrow">{constitutionLabels[constitution]} 맞춤</span>
           <h1 id="rec-detail-title">{openItem.title}</h1>
-          <p className="auth-copy">{categoryDetails[group][openItem.key]}</p>
+          <p className="auth-copy">{categoryDetails[constitution][openItem.key]}</p>
           <button className="primary-button" onClick={() => setOpenKey(null)}>확인했어요</button>
         </section>
       </div>
