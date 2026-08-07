@@ -152,12 +152,12 @@ export function getDailyCoachPlans(constitution: ConstitutionKey, date: Date = n
   ]
 }
 export const categories = [
-  { key: 'aerobic', image: '/recommendations/aerobic.png', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
-  { key: 'strength', image: '/recommendations/strength.png', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
-  { key: 'yoga', image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가', text: '호흡과 목·어깨 이완에 집중해 보세요.' },
-  { key: 'skincare', image: '/recommendations/skincare.png', name: '피부 · 뷰티 케어', color: 'pink', title: '저자극 보습 뷰티 루틴', text: '세안 후 수분 장벽을 지키고, 향이 강하지 않은 저자극 제품으로 마무리해요.' },
-  { key: 'nutrition', image: '/recommendations/vitamin.png', name: '영양 · 장 건강', color: 'yellow', title: '기초 영양 + 장 건강 루틴', text: '식사와 함께 비타민을 챙기고, 매일 같은 시간에 프로바이오틱스로 장도 편안하게 관리해요.' },
-  { key: 'omega3', image: '/recommendations/omega3.png', name: '', color: 'blue', title: '순환 밸런스', text: '개인 건강 상태에 맞춰 전문가와 상담하세요.' },
+  { key: 'aerobic', image: '/recommendations/aerobic.png', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소' },
+  { key: 'strength', image: '/recommendations/strength.png', name: '근력 운동', color: 'sage', title: '하체 중심 근력' },
+  { key: 'yoga', image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가' },
+  { key: 'skincare', image: '/recommendations/skincare.png', name: '피부 · 뷰티 케어', color: 'pink', title: '저자극 보습 뷰티 루틴' },
+  { key: 'nutrition', image: '/recommendations/vitamin.png', name: '영양 · 장 건강', color: 'yellow', title: '기초 영양 + 장 건강 루틴' },
+  { key: 'omega3', image: '/recommendations/omega3.png', name: '', color: 'blue', title: '순환 밸런스' },
 ]
 
 // 8체질(팔체질의학) 실제 명칭 매핑: 앱의 한/열+4그룹 코드 ↔ 금양·금음·목양·목음·토양·토음·수양·수음
