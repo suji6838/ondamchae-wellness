@@ -1,9 +1,7 @@
 import { ConstitutionKey, constitutionLabels, reports } from '../data'
-type Member = { name: string; email: string; picture?: string }
-type Props = { constitution: ConstitutionKey | null; onDiagnose: () => void; member: Member | null; onRequestLogin: () => void }
-export default function Report({ constitution, onDiagnose, member, onRequestLogin }: Props) {
+type Props = { constitution: ConstitutionKey | null; onDiagnose: () => void }
+export default function Report({ constitution, onDiagnose }: Props) {
   if (!constitution) return <section className="empty-view compact"><div className="empty-orb">☘</div><h1>맞춤 리포트를<br />준비해 드릴게요</h1><p>먼저 체질 진단을 완료해 주세요.</p><button className="primary-button" onClick={onDiagnose}>진단하러 가기</button></section>
-  if (!member) return <section className="empty-view compact"><div className="empty-orb">✦</div><h1>맞춤 리포트는<br />로그인 후 볼 수 있어요</h1><p>Google 계정으로 로그인하면 {constitutionLabels[constitution]} 체질의 강점·주의사항·추천 음식까지 자세한 리포트를 확인할 수 있어요.</p><button className="primary-button" onClick={onRequestLogin}>로그인하고 리포트 보기</button></section>
   const report = reports[constitution]
   return <section className="view report-view">
     <span className="eyebrow">{constitutionLabels[constitution]} 맞춤 리포트</span>

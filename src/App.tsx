@@ -100,10 +100,14 @@ export default function App() {
       setNotice('카카오톡 공유를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
     }
   }
-  const content = loading ? <section className="loading-view"><div className="loading-leaf">☘</div><p>나만의 웰니스 공간을 준비하고 있어요</p></section> : {
+  const gatedTabs: Tab[] = ['result', 'report', 'recommendations', 'coach']
+  const needsLogin = !!constitution && !member && gatedTabs.includes(tab)
+  const content = loading ? <section className="loading-view"><div className="loading-leaf">☘</div><p>나만의 웰니스 공간을 준비하고 있어요</p></section> : needsLogin ? (
+    <section className="empty-view compact"><div className="empty-orb">✦</div><h1>로그인하면<br />계속 볼 수 있어요</h1><p>Google 계정으로 로그인하면 진단 결과, 리포트, 추천, AI 코치까지 모두 이어서 확인할 수 있어요.</p><button className="primary-button" onClick={() => setShowAuth(true)}>로그인하고 계속 보기</button></section>
+  ) : {
     diagnosis: <Diagnosis answers={answers} onAnswer={addAnswer} onRestart={restart} />,
     result: <Result constitution={constitution} onDiagnose={startDiagnosis} onShare={share} />,
-    report: <Report constitution={constitution} onDiagnose={startDiagnosis} member={member} onRequestLogin={() => setShowAuth(true)} />,
+    report: <Report constitution={constitution} onDiagnose={startDiagnosis} />,
     recommendations: <Recommendations constitution={constitution} onDiagnose={startDiagnosis} />,
     coach: <Coach constitution={constitution} onDiagnose={startDiagnosis} />,
   }[tab]
