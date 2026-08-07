@@ -4,3 +4,4 @@
 .recommendation-visual img{width:100%;height:100%;object-fit:cover}
 .answer-button:disabled{opacity:.55;cursor:default;pointer-events:none}
 .member-button{max-width:140px}.member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#9aa79f;font-size:11px}.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--line)}

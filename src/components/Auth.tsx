@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { GOOGLE_CLIENT_ID } from '../config'
 import { supabase } from '../lib/supabase'
 
@@ -23,10 +23,25 @@ declare global {
   }
 }
 
+function friendlyAuthError(err: unknown): string {
+  const message = err instanceof Error ? err.message : String(err)
+  if (message.includes('Invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않아요.'
+  if (message.includes('User already registered')) return '이미 가입된 이메일이에요. 아래에서 로그인해 주세요.'
+  if (message.includes('Email not confirmed')) return '이메일 인증이 아직 완료되지 않았어요. 메일함의 확인 링크를 눌러주세요.'
+  if (message.includes('Password should be at least')) return '비밀번호는 6자 이상이어야 해요.'
+  if (message.includes('rate limit')) return '요청이 너무 많아요. 잠시 후 다시 시도해 주세요.'
+  return '처리하지 못했어요. 잠시 후 다시 시도해 주세요.'
+}
+
 export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
   const buttonRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     if (member) return
@@ -69,7 +84,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       return () => script?.removeEventListener('load', init)
     }
     return () => { cancelled = true }
-  }, [])
+  }, [member])
 
   if (member) {
     const logout = async () => {
@@ -93,15 +108,73 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
     </div>
   }
 
+  const submitEmail = async (event: FormEvent) => {
+    event.preventDefault()
+    setError('')
+    setNotice('')
+    const cleanEmail = email.trim()
+    const cleanName = name.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) return setError('올바른 이메일 주소를 입력해 주세요.')
+    if (password.length < 6) return setError('비밀번호는 6자 이상이어야 해요.')
+    if (mode === 'signup' && !cleanName) return setError('이름을 입력해 주세요.')
+    setSubmitting(true)
+    try {
+      if (mode === 'signup') {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: { data: { full_name: cleanName } },
+        })
+        if (signUpError) throw signUpError
+        if (!data.session) {
+          setNotice('확인 이메일을 보냈어요. 메일함의 링크를 눌러 인증을 완료한 뒤 로그인해 주세요.')
+          setMode('signin')
+          setPassword('')
+        } else {
+          await onComplete({ name: cleanName, email: cleanEmail })
+          onClose()
+        }
+      } else {
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({ email: cleanEmail, password })
+        if (signInError) throw signInError
+        const meta = data.user.user_metadata ?? {}
+        await onComplete({
+          name: meta.full_name || meta.name || data.user.email || cleanEmail,
+          email: data.user.email ?? cleanEmail,
+          picture: meta.avatar_url || meta.picture,
+        })
+        onClose()
+      }
+    } catch (err) {
+      setError(friendlyAuthError(err))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return <div className="modal-backdrop" role="presentation">
     <section className="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
       <button className="modal-close" onClick={onClose} aria-label="회원가입 창 닫기">×</button>
       <span className="eyebrow">온담채 회원 시작하기</span>
       <h1 id="auth-title">내 웰니스 기록을<br /><em>안전하게 이어가세요.</em></h1>
-      <p className="auth-copy">Google 계정으로 로그인하면 나의 진단 결과와 오늘의 실천을 이어서 확인할 수 있어요.</p>
+      <p className="auth-copy">로그인하면 나의 진단 결과와 오늘의 실천을 이어서 확인할 수 있어요.</p>
       <div ref={buttonRef} className="google-signin-slot" />
-      {submitting && <p className="loading-text">로그인 정보를 확인하고 있어요…</p>}
-      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="auth-divider"><span>또는 이메일로 {mode === 'signup' ? '가입' : '로그인'}</span></div>
+      <form onSubmit={submitEmail} noValidate>
+        {mode === 'signup' && (
+          <label>이름<input value={name} onChange={(e) => setName(e.target.value)} placeholder="이름을 입력해 주세요" autoComplete="name" /></label>
+        )}
+        <label>이메일<input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@email.com" type="email" autoComplete="email" /></label>
+        <label>비밀번호<input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="6자 이상" type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} /></label>
+        {notice && <p className="auth-copy" role="status">{notice}</p>}
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <button className="google-button" type="submit" disabled={submitting}>
+          {submitting ? '처리하고 있어요' : mode === 'signup' ? '이메일로 회원가입' : '이메일로 로그인'}
+        </button>
+      </form>
+      <button type="button" className="text-button" onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); setNotice('') }}>
+        {mode === 'signup' ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 이메일로 가입하기'}
+      </button>
       <p className="auth-note">로그인하면 진단 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
     </section>
   </div>
