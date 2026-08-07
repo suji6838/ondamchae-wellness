@@ -157,7 +157,7 @@ export const categories = [
   { key: 'yoga', image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가' },
   { key: 'skincare', image: '/recommendations/skincare.png', name: '피부 · 뷰티 케어', color: 'pink', title: '저자극 보습 뷰티 루틴' },
   { key: 'nutrition', image: '/recommendations/vitamin.png', name: '영양 · 장 건강', color: 'yellow', title: '기초 영양 + 장 건강 루틴' },
-  { key: 'omega3', image: '/recommendations/omega3.png', name: '', color: 'blue', title: '순환 밸런스' },
+  { key: 'omega3', image: '/recommendations/omega3.png', name: '컨디션 케어', color: 'blue', title: '순환 밸런스' },
 ]
 
 // 8체질(팔체질의학) 실제 명칭 매핑: 앱의 한/열+4그룹 코드 ↔ 금양·금음·목양·목음·토양·토음·수양·수음
