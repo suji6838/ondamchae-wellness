@@ -152,10 +152,52 @@ export function getDailyCoachPlans(constitution: ConstitutionKey, date: Date = n
   ]
 }
 export const categories = [
-  { image: '/recommendations/aerobic.png', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
-  { image: '/recommendations/strength.png', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
-  { image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가', text: '호흡과 목·어깨 이완에 집중해 보세요.' },
-  { image: '/recommendations/skincare.png', name: '피부 · 뷰티 케어', color: 'pink', title: '저자극 보습 뷰티 루틴', text: '세안 후 수분 장벽을 지키고, 향이 강하지 않은 저자극 제품으로 마무리해요.' },
-  { image: '/recommendations/vitamin.png', name: '영양 · 장 건강', color: 'yellow', title: '기초 영양 + 장 건강 루틴', text: '식사와 함께 비타민을 챙기고, 매일 같은 시간에 프로바이오틱스로 장도 편안하게 관리해요.' },
-  { image: '/recommendations/omega3.png', name: '오메가3', color: 'blue', title: '순환 밸런스', text: '개인 건강 상태에 맞춰 전문가와 상담하세요.' },
+  { key: 'aerobic', image: '/recommendations/aerobic.png', name: '유산소 운동', color: 'mint', title: '산책 기반 유산소', text: '대화가 가능한 속도로 30분 걷기를 권해요.' },
+  { key: 'strength', image: '/recommendations/strength.png', name: '근력 운동', color: 'sage', title: '하체 중심 근력', text: '스쿼트와 브릿지로 기초 체력을 채워요.' },
+  { key: 'yoga', image: '/recommendations/yoga.png', name: '요가 · 회복', color: 'cream', title: '저녁 릴랙싱 요가', text: '호흡과 목·어깨 이완에 집중해 보세요.' },
+  { key: 'skincare', image: '/recommendations/skincare.png', name: '피부 · 뷰티 케어', color: 'pink', title: '저자극 보습 뷰티 루틴', text: '세안 후 수분 장벽을 지키고, 향이 강하지 않은 저자극 제품으로 마무리해요.' },
+  { key: 'nutrition', image: '/recommendations/vitamin.png', name: '영양 · 장 건강', color: 'yellow', title: '기초 영양 + 장 건강 루틴', text: '식사와 함께 비타민을 챙기고, 매일 같은 시간에 프로바이오틱스로 장도 편안하게 관리해요.' },
+  { key: 'omega3', image: '/recommendations/omega3.png', name: '', color: 'blue', title: '순환 밸런스', text: '개인 건강 상태에 맞춰 전문가와 상담하세요.' },
 ]
+
+export const constitutionGroupOf: Record<ConstitutionKey, ConstitutionGroup> = {
+  한태양: '태양인', 열태양: '태양인',
+  한태음: '태음인', 열태음: '태음인',
+  한소양: '소양인', 열소양: '소양인',
+  한소음: '소음인', 열소음: '소음인',
+}
+
+export const categoryDetails: Record<ConstitutionGroup, Record<string, string>> = {
+  태양인: {
+    aerobic: '짧고 가벼운 걷기 위주로 자주 움직이는 습관이 잘 맞아요. 관절에 부담이 적은 수영도 좋아요.',
+    strength: '하체가 상대적으로 약한 편이라 스쿼트·런지 같은 하체 위주 근력 운동을 낮은 강도로 자주 반복해 보세요.',
+    yoga: '호흡을 길게 내쉬는 이완 요가로 상체 긴장을 풀어주는 스트레칭 위주로 구성해 보세요.',
+    skincare: '간 기능이 약한 편이라 피부도 예민할 수 있어요. 자극 적은 저자극 제품과 충분한 보습이 중요해요.',
+    nutrition: '기름진 음식보다 담백한 식사가 잘 맞아요. 비타민은 포도·감 같은 서늘한 성질의 과일과 함께, 장 건강엔 발효식품을 가볍게 곁들이세요.',
+    omega3: '하체 순환이 약할 수 있어 다리를 자주 움직이는 습관을 먼저 챙기고, 오메가3는 가벼운 유산소와 함께 병행하면 좋아요.',
+  },
+  태음인: {
+    aerobic: '땀을 충분히 낼 수 있는 걷기·조깅이 잘 맞아요. 지구력이 좋은 편이라 30분 이상 꾸준히 하는 유산소가 특히 효과적이에요.',
+    strength: '기초 체력이 좋은 편이라 전신 근력 운동을 꾸준히 늘려가는 게 잘 맞아요. 하체·등처럼 큰 근육군을 쓰는 운동이 순환에 도움돼요.',
+    yoga: '몸이 무거워지기 쉬운 편이라, 활동적인 파워 요가나 순환을 돕는 동적 스트레칭을 추천해요.',
+    skincare: '유분이 많은 편이라 가벼운 유분 조절 제품이 잘 맞아요. 규칙적인 세안 습관이 중요해요.',
+    nutrition: '소화력이 좋아 과식하기 쉬운 편이니, 식이섬유가 풍부한 영양제와 장 건강 관리가 특히 중요해요.',
+    omega3: '체중·순환 관리가 중요한 체질이라 오메가3 같은 순환 도움 영양제가 특히 잘 맞아요. 꾸준한 유산소와 병행하면 더 좋아요.',
+  },
+  소양인: {
+    aerobic: '빠르고 활동적인 운동이 잘 맞아요. 러닝이나 인터벌 트레이닝처럼 짧고 강도 있는 유산소를 추천해요.',
+    strength: '순발력이 좋은 편이라 서킷 트레이닝처럼 다양한 동작을 빠르게 전환하는 운동이 잘 맞아요.',
+    yoga: '열을 식혀주는 차분한 요가와 마무리 시원한 샤워가 잘 맞아요. 격한 운동 뒤엔 충분히 식히는 시간을 가지세요.',
+    skincare: '열감·트러블이 생기기 쉬운 편이라 진정 성분 위주의 저자극 제품이 특히 잘 맞아요.',
+    nutrition: '속열이 많은 편이라 자극적이지 않은 영양제를 고르고, 장 건강엔 서늘한 성질의 발효식품이 도움돼요.',
+    omega3: '상체에 열이 몰리기 쉬운 편이라, 순환을 고르게 도와주는 오메가3와 함께 충분한 수분 섭취가 중요해요.',
+  },
+  소음인: {
+    aerobic: '무리하지 않는 가벼운 걷기가 잘 맞아요. 실내에서 천천히 시작해 조금씩 시간을 늘려가는 방식을 추천해요.',
+    strength: '체력 소모가 큰 운동보다는 필라테스처럼 천천히 자세를 다스리는 근력 운동이 잘 맞아요.',
+    yoga: '몸을 따뜻하게 하는 온열 요가나 느린 호흡 명상이 특히 잘 맞아요.',
+    skincare: '피부가 건조해지기 쉬운 편이라 고보습 크림과 따뜻한 스킨케어 루틴이 도움돼요.',
+    nutrition: '소화력이 예민한 편이라 위에 부담 적은 영양제를 소량씩, 장 건강엔 따뜻한 성질의 유산균이 잘 맞아요.',
+    omega3: '손발이 찬 편이라 순환을 돕는 오메가3가 특히 도움될 수 있어요. 따뜻한 물과 함께 챙겨보세요.',
+  },
+}
