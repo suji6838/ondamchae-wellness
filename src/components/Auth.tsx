@@ -1,6 +1,9 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { GOOGLE_CLIENT_ID } from '../config'
 import { supabase } from '../lib/supabase'
+import LegalModal from './LegalModal'
+
+const CONSENT_KEY = 'ondamchae:agreed'
 
 type Member = { name: string; email: string; picture?: string }
 type Props = {
@@ -43,12 +46,25 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [agreedBefore, setAgreedBefore] = useState(() => localStorage.getItem(CONSENT_KEY) === '1')
+  const [agreeTerms, setAgreeTerms] = useState(false)
+  const [agreePrivacy, setAgreePrivacy] = useState(false)
+  const [legalView, setLegalView] = useState<'terms' | 'privacy' | null>(null)
+  const readyForAuth = agreedBefore || (agreeTerms && agreePrivacy)
+  const markAgreed = () => {
+    localStorage.setItem(CONSENT_KEY, '1')
+    setAgreedBefore(true)
+  }
 
   useEffect(() => {
     // 로그인 여부와 상관없이 항상 초기화해 둔다 — disableAutoSelect()가 로그아웃
     // 시점에도 정상 동작하려면 이 시점 이전에 initialize()가 호출되어 있어야 한다.
     let cancelled = false
     const handleCredential = async (response: { credential: string }) => {
+      if (!readyForAuth) {
+        setError('이용약관과 개인정보 수집·이용에 동의한 후 진행해 주세요.')
+        return
+      }
       setSubmitting(true)
       setError('')
       try {
@@ -57,6 +73,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
           token: response.credential,
         })
         if (signInError || !data.user) throw signInError ?? new Error('no user')
+        markAgreed()
         const meta = data.user.user_metadata ?? {}
         await onComplete({
           name: meta.full_name || meta.name || data.user.email || '회원',
@@ -88,7 +105,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       return () => script?.removeEventListener('load', init)
     }
     return () => { cancelled = true }
-  }, [member])
+  }, [member, readyForAuth])
 
   if (member) {
     const logout = async () => {
@@ -109,7 +126,12 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         <h1 id="auth-title">{member.name}님,<br /><em>안녕하세요.</em></h1>
         <p className="auth-copy">{member.email}으로 로그인되어 있어요. 진단 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
         <button className="google-button" type="button" onClick={logout} disabled={submitting}>{submitting ? '로그아웃하는 중이에요' : '로그아웃'}</button>
+        <p className="legal-footer-links">
+          <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
+          <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button>
+        </p>
       </section>
+      {legalView && <LegalModal doc={legalView} onClose={() => setLegalView(null)} />}
     </div>
   }
 
@@ -122,6 +144,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) return setError('올바른 이메일 주소를 입력해 주세요.')
     if (password.length < 6) return setError('비밀번호는 6자 이상이어야 해요.')
     if (mode === 'signup' && !cleanName) return setError('이름을 입력해 주세요.')
+    if (!readyForAuth) return setError('이용약관과 개인정보 수집·이용에 동의한 후 진행해 주세요.')
     setSubmitting(true)
     try {
       if (mode === 'signup') {
@@ -131,6 +154,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
           options: { data: { full_name: cleanName } },
         })
         if (signUpError) throw signUpError
+        markAgreed()
         if (!data.session) {
           setNotice('확인 이메일을 보냈어요. 메일함의 링크를 눌러 인증을 완료한 뒤 로그인해 주세요.')
           setMode('signin')
@@ -142,6 +166,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       } else {
         const { data, error: signInError } = await supabase.auth.signInWithPassword({ email: cleanEmail, password })
         if (signInError) throw signInError
+        markAgreed()
         const meta = data.user.user_metadata ?? {}
         await onComplete({
           name: meta.full_name || meta.name || data.user.email || cleanEmail,
@@ -163,7 +188,20 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       <span className="eyebrow">온담채 회원 시작하기</span>
       <h1 id="auth-title">내 웰니스 기록을<br /><em>안전하게 이어가세요.</em></h1>
       <p className="auth-copy">로그인하면 나의 진단 결과와 오늘의 실천을 이어서 확인할 수 있어요.</p>
-      <div ref={buttonRef} className="google-signin-slot" />
+      {!agreedBefore && (
+        <div className="consent-box">
+          <p className="consent-title">시작하기 전에 약관에 동의해 주세요.</p>
+          <label className="consent-row">
+            <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
+            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('terms')}>이용약관</button>에 동의합니다.</span>
+          </label>
+          <label className="consent-row">
+            <input type="checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
+            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('privacy')}>개인정보 수집·이용</button>에 동의합니다. (체질 진단 답변 등 건강 관련 정보 포함)</span>
+          </label>
+        </div>
+      )}
+      {readyForAuth ? <div ref={buttonRef} className="google-signin-slot" /> : <p className="consent-note">약관에 모두 동의하면 구글로 계속하기를 이용할 수 있어요.</p>}
       <div className="auth-divider"><span>또는 이메일로 {mode === 'signup' ? '가입' : '로그인'}</span></div>
       <form onSubmit={submitEmail} noValidate>
         {mode === 'signup' && (
@@ -173,7 +211,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         <label>비밀번호<input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="6자 이상" type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} /></label>
         {notice && <p className="auth-copy" role="status">{notice}</p>}
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="google-button" type="submit" disabled={submitting}>
+        <button className="google-button" type="submit" disabled={submitting || !readyForAuth}>
           {submitting ? '처리하고 있어요' : mode === 'signup' ? '이메일로 회원가입' : '이메일로 로그인'}
         </button>
       </form>
@@ -181,6 +219,11 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         {mode === 'signup' ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 이메일로 가입하기'}
       </button>
       <p className="auth-note">로그인하면 진단 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
+      <p className="legal-footer-links">
+        <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
+        <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button>
+      </p>
     </section>
+    {legalView && <LegalModal doc={legalView} onClose={() => setLegalView(null)} />}
   </div>
 }
