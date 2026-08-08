@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { GOOGLE_CLIENT_ID } from '../config'
+import { ADMIN_EMAIL, GOOGLE_CLIENT_ID } from '../config'
 import { supabase } from '../lib/supabase'
 import LegalModal from './LegalModal'
+import AdminStats from './AdminStats'
 
 const CONSENT_KEY = 'ondamchae:agreed'
 
@@ -125,6 +126,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         {member.picture && <img src={member.picture} alt="" className="member-avatar-lg" referrerPolicy="no-referrer" />}
         <h1 id="auth-title">{member.name}님,<br /><em>안녕하세요.</em></h1>
         <p className="auth-copy">{member.email}으로 로그인되어 있어요. 진단 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
+        {member.email === ADMIN_EMAIL && <AdminStats />}
         <button className="google-button" type="button" onClick={logout} disabled={submitting}>{submitting ? '로그아웃하는 중이에요' : '로그아웃'}</button>
         <p className="legal-footer-links">
           <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
