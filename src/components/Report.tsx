@@ -1,7 +1,7 @@
 import { ConstitutionKey, constitutionLabels, reports } from '../data'
 type Props = { constitution: ConstitutionKey | null; onDiagnose: () => void }
 export default function Report({ constitution, onDiagnose }: Props) {
-  if (!constitution) return <section className="empty-view compact"><div className="empty-orb">☘</div><h1>맞춤 리포트를<br />준비해 드릴게요</h1><p>먼저 체질 진단을 완료해 주세요.</p><button className="primary-button" onClick={onDiagnose}>진단하러 가기</button></section>
+  if (!constitution) return <section className="empty-view compact"><div className="empty-orb">☘</div><h1>맞춤 리포트를<br />준비해 드릴게요</h1><p>먼저 체질 셀프 테스트를 완료해 주세요.</p><button className="primary-button" onClick={onDiagnose}>셀프 테스트하러 가기</button></section>
   const report = reports[constitution]
   return <section className="view report-view">
     <span className="eyebrow">{constitutionLabels[constitution]} 맞춤 리포트</span>

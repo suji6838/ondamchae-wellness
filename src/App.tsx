@@ -12,7 +12,7 @@ import Auth from './components/Auth'
 type Tab = 'diagnosis' | 'result' | 'report' | 'recommendations' | 'coach'
 type Member = { name: string; email: string; picture?: string }
 const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: 'diagnosis', label: '진단', icon: '◌' }, { id: 'result', label: '결과', icon: '✦' }, { id: 'report', label: '리포트', icon: '▤' }, { id: 'recommendations', label: '추천', icon: '♡' }, { id: 'coach', label: 'AI 코치', icon: '☀' },
+  { id: 'diagnosis', label: '셀프 테스트', icon: '◌' }, { id: 'result', label: '결과', icon: '✦' }, { id: 'report', label: '리포트', icon: '▤' }, { id: 'recommendations', label: '추천', icon: '♡' }, { id: 'coach', label: 'AI 코치', icon: '☀' },
 ]
 const groups: ConstitutionGroup[] = ['태양인', '태음인', '소양인', '소음인']
 function determine(answers: string[]): ConstitutionKey {
@@ -87,7 +87,7 @@ export default function App() {
     setAnswers([])
     setConstitution(null)
     setTab('diagnosis')
-    setNotice('로그아웃했어요. 진단 결과는 계정에 안전하게 보관되어 있어요.')
+    setNotice('로그아웃했어요. 셀프 테스트 결과는 계정에 안전하게 보관되어 있어요.')
   }
   const share = () => {
     if (!constitution) return
@@ -105,7 +105,7 @@ export default function App() {
   const gatedTabs: Tab[] = ['result', 'report', 'recommendations', 'coach']
   const needsLogin = !!constitution && !member && gatedTabs.includes(tab)
   const content = loading ? <section className="loading-view"><div className="loading-leaf">☘</div><p>나만의 웰니스 공간을 준비하고 있어요</p></section> : needsLogin ? (
-    <section className="empty-view compact"><div className="empty-orb">✦</div><h1>로그인하면<br />계속 볼 수 있어요</h1><p>Google 계정으로 로그인하면 진단 결과, 리포트, 추천, AI 코치까지 모두 이어서 확인할 수 있어요.</p><button className="primary-button" onClick={() => setShowAuth(true)}>로그인하고 계속 보기</button></section>
+    <section className="empty-view compact"><div className="empty-orb">✦</div><h1>로그인하면<br />계속 볼 수 있어요</h1><p>Google 계정으로 로그인하면 셀프 테스트 결과, 리포트, 추천, AI 코치까지 모두 이어서 확인할 수 있어요.</p><button className="primary-button" onClick={() => setShowAuth(true)}>로그인하고 계속 보기</button></section>
   ) : {
     diagnosis: <Diagnosis answers={answers} onAnswer={addAnswer} onRestart={restart} />,
     result: <Result constitution={constitution} onDiagnose={startDiagnosis} onShare={share} />,

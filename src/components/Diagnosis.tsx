@@ -7,7 +7,7 @@ export default function Diagnosis({ answers, onAnswer, onRestart }: Props) {
   const [locked, setLocked] = useState(false)
   const lockedRef = useRef(false)
   useEffect(() => { setLocked(false); lockedRef.current = false }, [index])
-  if (!current) return <section className="empty-view"><div className="empty-orb">✓</div><h1>이미 진단을<br />완료했어요</h1><p>저장된 결과는 [결과] 탭에서 계속 확인할 수 있어요. 처음부터 다시 진단하고 싶다면 아래 버튼을 눌러주세요.</p><button className="primary-button" onClick={onRestart}>처음부터 다시 진단하기</button></section>
+  if (!current) return <section className="empty-view"><div className="empty-orb">✓</div><h1>이미 셀프 테스트를<br />완료했어요</h1><p>저장된 결과는 [결과] 탭에서 계속 확인할 수 있어요. 처음부터 다시 셀프 테스트하고 싶다면 아래 버튼을 눌러주세요.</p><button className="primary-button" onClick={onRestart}>처음부터 다시 셀프 테스트하기</button></section>
   const handleAnswer = (label: string) => {
     if (lockedRef.current) return
     lockedRef.current = true
@@ -23,6 +23,7 @@ export default function Diagnosis({ answers, onAnswer, onRestart }: Props) {
       <h2>{current.prompt}</h2>
       <div className="answers">{current.options.map((option) => <button key={option.label} className="answer-button" onClick={() => handleAnswer(option.label)} disabled={locked}><span>{option.label}</span><b>→</b></button>)}</div>
     </article>
-    <p className="privacy-note">진단 답변은 맞춤형 건강 관리 안내를 위해 안전하게 보관됩니다.</p>
+    <p className="privacy-note">셀프 테스트 답변은 맞춤형 건강 관리 안내를 위해 안전하게 보관됩니다.</p>
+    <p className="disclaimer">재미로 알아보는 체질 경향 테스트이며 의학적 진단이 아닙니다.</p>
   </section>
 }

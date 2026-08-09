@@ -125,7 +125,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         <span className="eyebrow">온담채 회원</span>
         {member.picture && <img src={member.picture} alt="" className="member-avatar-lg" referrerPolicy="no-referrer" />}
         <h1 id="auth-title">{member.name}님,<br /><em>안녕하세요.</em></h1>
-        <p className="auth-copy">{member.email}으로 로그인되어 있어요. 진단 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
+        <p className="auth-copy">{member.email}으로 로그인되어 있어요. 셀프 테스트 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
         {member.email === ADMIN_EMAIL && <AdminStats />}
         <button className="google-button" type="button" onClick={logout} disabled={submitting}>{submitting ? '로그아웃하는 중이에요' : '로그아웃'}</button>
         <p className="legal-footer-links">
@@ -189,7 +189,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       <button className="modal-close" onClick={onClose} aria-label="회원가입 창 닫기">×</button>
       <span className="eyebrow">온담채 회원 시작하기</span>
       <h1 id="auth-title">내 웰니스 기록을<br /><em>안전하게 이어가세요.</em></h1>
-      <p className="auth-copy">로그인하면 나의 진단 결과와 오늘의 실천을 이어서 확인할 수 있어요.</p>
+      <p className="auth-copy">로그인하면 나의 셀프 테스트 결과와 오늘의 실천을 이어서 확인할 수 있어요.</p>
       {!agreedBefore && (
         <div className="consent-box">
           <p className="consent-title">시작하기 전에 약관에 동의해 주세요.</p>
@@ -199,7 +199,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
           </label>
           <label className="consent-row">
             <input type="checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
-            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('privacy')}>개인정보 수집·이용</button>에 동의합니다. (체질 진단 답변 등 건강 관련 정보 포함)</span>
+            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('privacy')}>개인정보 수집·이용</button>에 동의합니다. (체질 셀프 테스트 답변 등 건강 관련 정보 포함)</span>
           </label>
         </div>
       )}
@@ -220,7 +220,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       <button type="button" className="text-button" onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); setNotice('') }}>
         {mode === 'signup' ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 이메일로 가입하기'}
       </button>
-      <p className="auth-note">로그인하면 진단 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
+      <p className="auth-note">로그인하면 셀프 테스트 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
       <p className="legal-footer-links">
         <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
         <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button>

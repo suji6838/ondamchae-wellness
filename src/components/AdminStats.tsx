@@ -38,7 +38,7 @@ export default function AdminStats() {
     {stats && <div className="admin-stats-grid">
       <div><b>{stats.totalUsers.toLocaleString()}</b><span>전체 가입자</span></div>
       <div><b>{stats.signupsLast7Days.toLocaleString()}</b><span>최근 7일 신규가입</span></div>
-      <div><b>{stats.diagnosedProfiles.toLocaleString()}</b><span>진단 완료</span></div>
+      <div><b>{stats.diagnosedProfiles.toLocaleString()}</b><span>셀프 테스트 완료</span></div>
     </div>}
   </div>
 }

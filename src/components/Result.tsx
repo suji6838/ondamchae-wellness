@@ -1,9 +1,9 @@
 import { ConstitutionKey, constitutionLabels, reports } from '../data'
 type Props = { constitution: ConstitutionKey | null; onDiagnose: () => void; onShare: () => void }
 export default function Result({ constitution, onDiagnose, onShare }: Props) {
-  if (!constitution) return <section className="empty-view"><div className="empty-orb">⌁</div><h1>아직 내 체질을<br />알아가는 중이에요</h1><p>20가지 질문에 답하면 나에게 가까운 체질과 건강 루틴을 확인할 수 있어요.</p><button className="primary-button" onClick={onDiagnose}>체질 진단 시작하기</button></section>
+  if (!constitution) return <section className="empty-view"><div className="empty-orb">⌁</div><h1>아직 내 체질을<br />알아가는 중이에요</h1><p>20가지 질문에 답하면 나에게 가까운 체질과 건강 루틴을 확인할 수 있어요.</p><button className="primary-button" onClick={onDiagnose}>체질 셀프 테스트 시작하기</button></section>
   const report = reports[constitution]
-  if (!report) return <section className="empty-view"><div className="empty-orb">⌁</div><h1>저장된 진단 결과를<br />다시 확인해 볼까요?</h1><p>이전 결과 형식이 변경되어 새 진단이 필요해요. 20가지 질문으로 나에게 가까운 체질 경향을 다시 살펴볼 수 있어요.</p><button className="primary-button" onClick={onDiagnose}>진단 다시 시작하기</button></section>
+  if (!report) return <section className="empty-view"><div className="empty-orb">⌁</div><h1>저장된 셀프 테스트 결과를<br />다시 확인해 볼까요?</h1><p>이전 결과 형식이 변경되어 새 셀프 테스트가 필요해요. 20가지 질문으로 나에게 가까운 체질 경향을 다시 살펴볼 수 있어요.</p><button className="primary-button" onClick={onDiagnose}>셀프 테스트 다시 시작하기</button></section>
   return <section className="view result-view">
     <span className="eyebrow">생활 습관 기반 8체질 경향 자가 체크</span><div className="result-hero"><div><p>선택 경향이 가장 많이 나타난 유형은</p><h1>{constitutionLabels[constitution]}</h1><strong>{report.summary}</strong></div><div className="constitution-seal"><span>八體質</span><b>{constitution.slice(0, 2)}</b></div></div>
     <button className="share-button" onClick={onShare}><span>💬</span> 카카오톡으로 결과 공유하기 <b>↗</b></button>
