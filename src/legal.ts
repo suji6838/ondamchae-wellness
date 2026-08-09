@@ -4,7 +4,6 @@
 // 경우 변호사 등 전문가 검토를 권장합니다.
 
 export const LEGAL_EFFECTIVE_DATE = '2026년 8월 8일'
-export const LEGAL_CONTACT_EMAIL = 'joan6838@gmail.com'
 
 export type LegalSection = { title: string; body: string[] }
 
@@ -115,8 +114,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     title: '5. 이용자의 권리와 행사 방법',
     body: [
-      '이용자는 언제든지 자신의 개인정보 열람, 정정, 삭제, 처리정지를 요청할 수 있으며, 아래 문의처를 통해 요청할 수 있습니다.',
-      `문의: ${LEGAL_CONTACT_EMAIL}`,
+      '이용자는 언제든지 자신의 개인정보 열람, 정정, 삭제, 처리정지를 요청할 수 있습니다.',
     ],
   },
   {
@@ -130,10 +128,6 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
     body: [
       '로그인하지 않은 상태에서는 셀프 테스트 진행 상황 등이 이용자의 기기(브라우저 로컬스토리지)에만 저장되며, 서버로 전송되지 않습니다. 로그인 시 해당 정보는 계정에 안전하게 저장되도록 전환됩니다.',
     ],
-  },
-  {
-    title: '8. 개인정보 보호책임자',
-    body: [`문의 이메일: ${LEGAL_CONTACT_EMAIL}`],
   },
   {
     title: '부칙',
