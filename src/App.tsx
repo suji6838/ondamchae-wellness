@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { api, clearLocalGuestData } from './lib/api'
 import { supabase } from './lib/supabase'
 import { shareToKakao } from './lib/kakaoShare'
-import { ConstitutionGroup, ConstitutionKey, constitutionLabels, questions } from './data'
+import { AnswerOption, ConstitutionGroup, ConstitutionKey, constitutionLabels, questions } from './data'
 import Diagnosis from './components/Diagnosis'
 import Result from './components/Result'
 import Report from './components/Report'
@@ -18,15 +18,18 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
 const groups: ConstitutionGroup[] = ['태양인', '태음인', '소양인', '소음인']
 function determine(answers: string[]): ConstitutionKey {
   const groupScores: Record<ConstitutionGroup, number> = { 태양인: 0, 태음인: 0, 소양인: 0, 소음인: 0 }
-  const thermalScores: Record<'한' | '열', number> = { 한: 0, 열: 0 }
+  const selectedOptions: AnswerOption[] = []
   answers.forEach((answer, index) => {
     const selected = questions[index]?.options.find(option => option.label === answer)
     if (selected) {
       groupScores[selected.type] += 1
-      thermalScores[selected.thermal] += 1
+      selectedOptions.push(selected)
     }
   })
   const group = groups.reduce((leading, type) => groupScores[type] > groupScores[leading] ? type : leading, groups[0])
+  // 한/열은 '고른 체질군'과 무관한 전체 답변이 아니라, 실제로 그 체질군을 고른 답변에서만 집계한다.
+  const thermalScores: Record<'한' | '열', number> = { 한: 0, 열: 0 }
+  selectedOptions.forEach((option) => { if (option.type === group) thermalScores[option.thermal] += 1 })
   const thermal = thermalScores.열 > thermalScores.한 ? '열' : '한'
   return `${thermal}${group.slice(0, 2)}` as ConstitutionKey
 }
