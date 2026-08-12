@@ -23,6 +23,5 @@ export default function Diagnosis({ answers, onAnswer, onRestart }: Props) {
       <h2>{current.prompt}</h2>
       <div className="answers">{current.options.map((option) => <button key={option.label} className="answer-button" onClick={() => handleAnswer(option.label)} disabled={locked}><span>{option.label}</span><b>→</b></button>)}</div>
     </article>
-    <p className="disclaimer">셀프 테스트는 체질 경향 테스트이며 의학적 진단이 아닙니다.</p>
   </section>
 }
