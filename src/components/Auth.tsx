@@ -194,7 +194,7 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
           <p className="consent-title">시작하기 전에 약관에 동의해 주세요.</p>
           <label className="consent-row">
             <input type="checkbox" checked={agreeAll} onChange={(e) => setAgreeAll(e.target.checked)} />
-            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('terms')}>이용약관</button> 및 <button type="button" className="legal-link" onClick={() => setLegalView('privacy')}>개인정보 수집·이용</button>에 동의합니다. (체질 셀프 테스트 답변 등 건강 관련 정보 포함)</span>
+            <span>[필수] <button type="button" className="legal-link" onClick={() => setLegalView('terms')}>이용약관</button> 및 <button type="button" className="legal-link" onClick={() => setLegalView('privacy')}>개인정보 수집·이용</button>에 동의합니다.</span>
           </label>
         </div>
       )}
