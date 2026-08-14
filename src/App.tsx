@@ -13,7 +13,7 @@ import LegalModal from './components/LegalModal'
 type Tab = 'diagnosis' | 'result' | 'report' | 'recommendations' | 'coach'
 type Member = { name: string; email: string; picture?: string }
 const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: 'diagnosis', label: '셀프 테스트', icon: '◌' }, { id: 'result', label: '결과', icon: '✦' }, { id: 'report', label: '리포트', icon: '▤' }, { id: 'recommendations', label: '추천', icon: '♡' }, { id: 'coach', label: 'AI 코치', icon: '☀' },
+  { id: 'diagnosis', label: '셀프 테스트', icon: '◌' }, { id: 'result', label: '결과', icon: '✦' }, { id: 'report', label: '리포트', icon: '▤' }, { id: 'recommendations', label: '온담채추천', icon: '♡' }, { id: 'coach', label: '온담채 코치', icon: '☀' },
 ]
 const groups: ConstitutionGroup[] = ['태양인', '태음인', '소양인', '소음인']
 function determine(answers: string[]): ConstitutionKey {
