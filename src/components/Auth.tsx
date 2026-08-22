@@ -127,9 +127,11 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
         <p className="auth-copy">{member.email}으로 로그인되어 있어요. 셀프 테스트 결과와 오늘의 실천 기록이 계정에 안전하게 저장돼요.</p>
         {member.email === ADMIN_EMAIL && <AdminStats />}
         <button className="google-button" type="button" onClick={logout} disabled={submitting}>{submitting ? '로그아웃하는 중이에요' : '로그아웃'}</button>
+        {notice && <p className="auth-copy" role="status">{notice}</p>}
         <p className="legal-footer-links">
           <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
-          <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button>
+          <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button><span>·</span>
+          <button type="button" onClick={() => setNotice('문의하기: amandakim6838@gmail.com')}>문의하기</button>
         </p>
       </section>
       {legalView && <LegalModal doc={legalView} onClose={() => setLegalView(null)} />}
@@ -218,7 +220,8 @@ export default function Auth({ onClose, onComplete, member, onLogout }: Props) {
       <p className="auth-note">로그인하면 셀프 테스트 결과와 오늘의 실천 기록이 안전하게 저장되어, 다른 기기에서도 이어서 확인할 수 있어요.</p>
       <p className="legal-footer-links">
         <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>·</span>
-        <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button>
+        <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button><span>·</span>
+        <button type="button" onClick={() => setNotice('문의하기: amandakim6838@gmail.com')}>문의하기</button>
       </p>
     </section>
     {legalView && <LegalModal doc={legalView} onClose={() => setLegalView(null)} />}

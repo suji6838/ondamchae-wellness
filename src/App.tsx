@@ -9,7 +9,6 @@ import Report from './components/Report'
 import Recommendations from './components/Recommendations'
 import Coach from './components/Coach'
 import Auth from './components/Auth'
-import LegalModal from './components/LegalModal'
 type Tab = 'diagnosis' | 'result' | 'report' | 'recommendations' | 'coach'
 type Member = { name: string; email: string; picture?: string }
 const tabs: { id: Tab; label: string; icon: string }[] = [
@@ -41,7 +40,6 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
   const [notice, setNotice] = useState('')
-  const [legalView, setLegalView] = useState<'terms' | 'privacy' | null>(null)
   useEffect(() => {
     api('profile').then(r => r.json()).then(data => {
       setAnswers(data.answers || [])
@@ -121,14 +119,8 @@ export default function App() {
   return <div className="app-shell">
     <header className="topbar"><button className="brand" onClick={goHome} aria-label="온담채 홈으로"><span>온담채</span><small>溫談採 · 따뜻한(溫) 이야기(談)가 가득 채워지는(採) 공간</small></button><div className="header-actions"><div className="header-status"><i></i><span>{constitution ? `${constitution} 분석 완료` : '나를 알아가는 중'}</span></div><button className="member-button" onClick={() => setShowAuth(true)}>{member ? (<>{member.picture && <img src={member.picture} alt="" className="member-avatar" referrerPolicy="no-referrer" />}<span className="member-name">{member.name}님</span></>) : '로그인'}</button></div></header>
     <main>{content}</main>
-    <footer className="site-footer">
-      <button type="button" onClick={() => setLegalView('terms')}>이용약관</button><span>|</span>
-      <button type="button" onClick={() => setLegalView('privacy')}>개인정보처리방침</button><span>|</span>
-      <button type="button" onClick={() => setNotice('문의하기: amandakim6838@gmail.com')}>문의하기</button>
-    </footer>
     {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="알림 닫기">×</button></div>}
     {showAuth && <Auth onClose={() => setShowAuth(false)} onComplete={completeAuth} member={member} onLogout={logout} />}
-    {legalView && <LegalModal doc={legalView} onClose={() => setLegalView(null)} />}
     <nav className="tabbar" aria-label="주요 메뉴">{tabs.map(item => <button key={item.id} className={tab === item.id ? 'active' : ''} onClick={() => setTab(item.id)}><span>{item.icon}</span>{item.label}</button>)}</nav>
   </div>
 }
